@@ -9,8 +9,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.devspace.ui.components.EmptyView
+import com.example.devspace.ui.components.ErrorView
+import com.example.devspace.ui.components.LoadingView
 import com.example.devspace.ui.components.NewsCard
 import com.example.devspace.ui.components.RepoCard
+import com.example.devspace.ui.components.SearchBar
+import com.example.devspace.ui.screens.splash.SplashScreen
 import com.example.devspace.ui.theme.DevSpaceTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,8 +23,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            DevSpaceTheme {
-
+            MaterialTheme {
+                SplashScreen()
             }
         }
     }
