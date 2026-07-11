@@ -16,14 +16,16 @@ fun LoadingView() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         CircularProgressIndicator()
 
         Text(
-            text = "Loading...",
-            style = MaterialTheme.typography.bodyMedium
+            text = "Loading latest tech updates...",
+            style = MaterialTheme.typography.bodyLarge
         )
+
     }
+
 }

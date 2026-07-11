@@ -2,9 +2,9 @@ package com.example.devspace.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -24,25 +24,32 @@ fun ErrorView(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Icon(
             imageVector = Icons.Default.Warning,
-            contentDescription = "Error"
+            contentDescription = null
         )
-        Spacer(modifier = Modifier.height(12.dp))
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = message,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.titleMedium
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = onRetry
         ) {
-            Text(text = "Retry")
+
+            Text("Retry")
+
         }
+
     }
+
 }
