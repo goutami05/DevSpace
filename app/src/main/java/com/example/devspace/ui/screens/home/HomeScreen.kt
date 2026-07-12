@@ -27,16 +27,20 @@ import com.example.devspace.ui.components.TopBar
 import com.example.devspace.viewmodel.HomeViewModel
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import com.example.devspace.viewmodel.BookmarkViewModel
+
 
 @Composable
 fun HomeScreen(
     navController: NavController,
-    homeViewModel: HomeViewModel = viewModel() // 1. Pass down your ViewModel instance
+    homeViewModel: HomeViewModel = viewModel(), // 1. Pass down your ViewModel instance
+    bookmarkViewModel: BookmarkViewModel = viewModel()
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
     // 2. Collect your live Paging 3 items stream
     val lazyArticles = homeViewModel.newsArticlesStream.collectAsLazyPagingItems()
+    val bookmarkedUrls by bookmarkViewModel.bookmarkedUrls.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -76,16 +80,16 @@ fun HomeScreen(
                 NewsCard(
                     title = article.title ?: "",
                     description = article.description ?: "",
-                    // Fallback placeholders if raw API text fields or images are empty
                     imageUrl = article.urlToImage ?: "https://picsum.photos/600/300",
                     source = article.source?.name ?: "Unknown Source",
                     publishedAt = article.publishedAt ?: "",
-                    isBookmarked = false,
-                    onBookmarkClick = {},
+                    isBookmarked = article.url != null && bookmarkedUrls.contains(article.url),
+                    onBookmarkClick = {
+                        bookmarkViewModel.toggleBookmark(article)
+                    },
                     onArticleClick = {
-                        // URLs must be safely encoded before being passed as navigation arguments
                         val encodedUrl = URLEncoder.encode(article.url, StandardCharsets.UTF_8.toString())
-                        navController.navigate("webview_screen/$encodedUrl")
+                        navController.navigate("webview/$encodedUrl")
                     }
                 )
             }
