@@ -8,46 +8,28 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.example.devspace.ui.components.EmptyView
 import com.example.devspace.ui.components.NewsCard
 import com.example.devspace.ui.components.TopBar
-
-data class BookmarkArticle(
-    val title: String,
-    val description: String,
-    val image: String,
-    val source: String,
-    val date: String
-)
+import com.example.devspace.viewmodel.BookmarkViewModel
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
-fun BookmarkScreen(navController: NavController) {
+fun BookmarkScreen(
+    navController: NavController,
+    bookmarkViewModel: BookmarkViewModel = viewModel()
+) {
 
-    val bookmarkList = listOf(
+    val bookmarkedArticles by bookmarkViewModel.bookmarkedArticles.collectAsState()
 
-        BookmarkArticle(
-            title = "Android 17 Released",
-            description = "Google has officially announced Android 17 with several AI-powered features.",
-            image = "https://picsum.photos/603/300",
-            source = "Android Developers",
-            date = "2 hours ago"
-        ),
-
-        BookmarkArticle(
-            title = "Jetpack Compose 2.0",
-            description = "Compose becomes faster and more efficient.",
-            image = "https://picsum.photos/604/300",
-            source = "Google",
-            date = "Yesterday"
-        )
-
-    )
-
-    if (bookmarkList.isEmpty()) {
+    if (bookmarkedArticles.isEmpty()) {
 
         EmptyView(
             title = "No Bookmarks Yet",
@@ -57,37 +39,39 @@ fun BookmarkScreen(navController: NavController) {
     } else {
 
         LazyColumn(
-
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
-
             contentPadding = PaddingValues(vertical = 12.dp),
-
             verticalArrangement = Arrangement.spacedBy(12.dp)
-
         ) {
 
             item {
-
                 TopBar(
                     title = "Bookmarks",
                     subtitle = "Your saved articles"
                 )
-
             }
 
-            items(bookmarkList) { article ->
+            items(bookmarkedArticles, key = { it.url ?: it.hashCode().toString() }) { article ->
 
                 NewsCard(
-                    title = article.title,
-                    description = article.description,
-                    imageUrl = article.image,
-                    source = article.source,
-                    publishedAt = article.date,
+                    title = article.title ?: "",
+                    description = article.description ?: "",
+                    imageUrl = article.urlToImage ?: "https://picsum.photos/600/300",
+                    source = article.source?.name ?: "Unknown Source",
+                    publishedAt = article.publishedAt ?: "",
                     isBookmarked = true,
-                    onBookmarkClick = {},
-                    onArticleClick = {}
+                    onBookmarkClick = {
+                        bookmarkViewModel.removeBookmark(article)
+                    },
+                    onArticleClick = {
+                        val encodedUrl = URLEncoder.encode(
+                            article.url ?: "",
+                            StandardCharsets.UTF_8.toString()
+                        )
+                        navController.navigate("webview/$encodedUrl")
+                    }
                 )
 
             }
