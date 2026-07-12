@@ -1,4 +1,6 @@
 package com.example.devspace.model.news
 
-class Source {
-}
+data class Source(
+    val id: String?,
+    val name: String
+)
