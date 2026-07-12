@@ -4,10 +4,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.devspace.navigation.AppNavGraph
+import com.example.devspace.ui.components.EmptyView
+import com.example.devspace.ui.components.ErrorView
+import com.example.devspace.ui.components.LoadingView
+import com.example.devspace.ui.components.NewsCard
+import com.example.devspace.ui.components.RepoCard
+import com.example.devspace.ui.components.SearchBar
+import com.example.devspace.ui.screens.bookmark.BookmarkScreen
+import com.example.devspace.ui.screens.home.HomeScreen
+import com.example.devspace.ui.screens.repo.RepoScreen
+import com.example.devspace.ui.screens.splash.SplashScreen
+import com.example.devspace.ui.screens.webview.WebViewScreen
 import com.example.devspace.ui.theme.DevSpaceTheme
 
 class MainActivity : ComponentActivity() {
@@ -16,7 +29,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             DevSpaceTheme {
-
+                AppNavGraph()
             }
         }
     }
