@@ -2,126 +2,93 @@ package com.example.devspace.ui.screens.repo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.devspace.navigation.Screen
 import com.example.devspace.ui.components.RepoCard
-import com.example.devspace.ui.components.SearchBar
 import com.example.devspace.ui.components.TopBar
-
-data class DummyRepo(
-    val name: String,
-    val description: String,
-    val owner: String,
-    val language: String,
-    val stars: Int,
-    val forks: Int
-)
+import com.example.devspace.viewmodel.RepoViewModel
 
 @Composable
-fun RepoScreen(navController: NavController) {
+fun RepoScreen(
+    navController: NavController,
+    repoViewModel: RepoViewModel = viewModel()
+) {
+    val lazyRepos = repoViewModel.githubReposStream.collectAsLazyPagingItems()
+    val searchQuery by repoViewModel.searchQuery.collectAsState()
 
-    var searchQuery by remember {
-        mutableStateOf("")
-    }
-
-    val repoList = listOf(
-
-        DummyRepo(
-            "Retrofit",
-            "A type-safe HTTP client for Android and Kotlin.",
-            "Square",
-            "Kotlin",
-            45000,
-            8500
-        ),
-
-        DummyRepo(
-            "Jetpack Compose",
-            "Android's modern toolkit for building native UI.",
-            "Google",
-            "Kotlin",
-            39000,
-            7200
-        ),
-
-        DummyRepo(
-            "Coil",
-            "Image loading library for Android backed by Kotlin Coroutines.",
-            "Coil-KT",
-            "Kotlin",
-            12000,
-            700
-        )
-
-    )
-
-    LazyColumn(
-
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-
-        contentPadding = PaddingValues(vertical = 12.dp),
-
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-
+            .background(MaterialTheme.colorScheme.background)
     ) {
+        TopBar(
+            title = "Trending Repositories",
+            subtitle = "Explore top-tier open source innovations worldwide 🌍"
+        )
 
-        item {
+        // 🌟 Input Search Field
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { repoViewModel.updateSearchQuery(it) },
+            label = { Text("Search by programming language (e.g., Kotlin)") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            singleLine = true
+        )
 
-            TopBar(
-                title = "GitHub Explorer",
-                subtitle = "Discover trending repositories"
-            )
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(count = lazyRepos.itemCount) { index ->
+                val repo = lazyRepos[index]
+                if (repo != null) {
+                    RepoCard(
+                        repo = repo,
+                        onRepoClick = {
+                            val originalUrl = repo.html_url
+                            if (!originalUrl.isNullOrBlank()) {
+                                navController.navigate(Screen.WebView.createRoute(originalUrl))
+                            }
+                        }
+                    )
+                }
+            }
 
+            if (lazyRepos.loadState.append is LoadState.Loading) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
         }
-
-        item {
-
-            SearchBar(
-                query = searchQuery,
-                onQueryChange = {
-                    searchQuery = it
-                },
-                placeholder = "Search by programming language"
-            )
-
-        }
-
-        item {
-
-            Text(
-                text = "🔥 Trending Repositories",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-
-        }
-
-        items(repoList) { repo ->
-
-            RepoCard(
-                repoName = repo.name,
-                description = repo.description,
-                owner = repo.owner,
-                language = repo.language,
-                stars = repo.stars,
-                forks = repo.forks,
-                onRepoClick = {}
-            )
-
-        }
-
     }
-
 }

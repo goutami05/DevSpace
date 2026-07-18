@@ -6,11 +6,9 @@ import retrofit2.http.Query
 
 interface GithubApi {
     @GET("search/repositories")
-    suspend fun searchTrendingRepos(
-        @Query("q") query: String = "language:kotlin",
-        @Query("sort") sort: String = "stars",
-        @Query("order") order: String = "desc",
-        @Query("page") pageNumber: Int,
-        @Query("per_page") perPage: Int = 20
+    suspend fun getTrendingRepositories(
+        @Query("q") query: String,
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int
     ): GithubResponse
 }
