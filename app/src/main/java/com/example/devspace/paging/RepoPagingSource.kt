@@ -6,7 +6,8 @@ import com.example.devspace.model.github.Repo
 import com.example.devspace.network.GithubApi
 
 class RepoPagingSource(
-    private val githubApi: GithubApi
+    private val githubApi: GithubApi,
+    private val query: String
 ) : PagingSource<Int, Repo>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Repo> {
@@ -15,8 +16,9 @@ class RepoPagingSource(
 
         return try {
             // 2. Fetch the specified page size requirement from the GitHub API network stream
-            val response = githubApi.searchTrendingRepos(
-                pageNumber = position,
+            val response = githubApi.getTrendingRepositories(
+                query = query,
+                page = position,
                 perPage = params.loadSize
             )
 

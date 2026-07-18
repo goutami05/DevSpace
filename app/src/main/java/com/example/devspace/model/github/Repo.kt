@@ -7,6 +7,7 @@ data class Repo(
     val description: String?,
     val html_url: String,
     val stargazers_count: Int,
+    val forks_count: Int,
     val owner: Owner,
     val language: String?
 )

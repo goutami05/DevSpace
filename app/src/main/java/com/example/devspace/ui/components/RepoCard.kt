@@ -24,15 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.remember
+import com.example.devspace.model.github.Repo
 
 @Composable
 fun RepoCard(
-    repoName: String,
-    description: String,
-    owner: String,
-    language: String,
-    stars: Int,
-    forks: Int,
+    repo: Repo,
     onRepoClick: () -> Unit
 ) {
 
@@ -67,7 +63,7 @@ fun RepoCard(
         ) {
 
             Text(
-                text = repoName,
+                text = repo.name,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -75,7 +71,7 @@ fun RepoCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = description,
+                text = repo.description ?: "",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 3
@@ -89,7 +85,7 @@ fun RepoCard(
             ) {
 
                 Text(
-                    text = language,
+                    text = repo.language ?: "",
                     modifier = Modifier.padding(
                         horizontal = 12.dp,
                         vertical = 5.dp
@@ -115,7 +111,7 @@ fun RepoCard(
                 Spacer(modifier = Modifier.width(6.dp))
 
                 Text(
-                    text = owner,
+                    text = repo.owner.login,
                     style = MaterialTheme.typography.labelLarge
                 )
 
@@ -141,7 +137,7 @@ fun RepoCard(
                     Spacer(modifier = Modifier.width(4.dp))
 
                     Text(
-                        text = stars.toString()
+                        text = repo.stargazers_count.toString()
                     )
 
                 }
@@ -161,7 +157,7 @@ fun RepoCard(
                     Spacer(modifier = Modifier.width(4.dp))
 
                     Text(
-                        text = forks.toString()
+                        text = repo.forks_count.toString()
                     )
 
                 }

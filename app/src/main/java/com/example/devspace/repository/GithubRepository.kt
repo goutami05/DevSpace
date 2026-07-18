@@ -19,7 +19,7 @@ class GithubRepository(private val githubApi: GithubApi) {
                 pageSize = 20,          // Loads 20 repositories per page request
                 enablePlaceholders = false // Prevents showing empty placeholder blocks while loading
             ),
-            pagingSourceFactory = { RepoPagingSource(githubApi) }
+            pagingSourceFactory = { RepoPagingSource(githubApi, "stars:>1000") }
         ).flow
     }
 }
