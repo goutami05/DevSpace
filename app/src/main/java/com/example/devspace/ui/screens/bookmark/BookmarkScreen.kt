@@ -14,12 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.devspace.navigation.Screen
 import com.example.devspace.ui.components.EmptyView
 import com.example.devspace.ui.components.NewsCard
 import com.example.devspace.ui.components.TopBar
 import com.example.devspace.viewmodel.BookmarkViewModel
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun BookmarkScreen(
@@ -59,18 +58,14 @@ fun BookmarkScreen(
                     title = article.title ?: "",
                     description = article.description ?: "",
                     imageUrl = article.urlToImage ?: "https://picsum.photos/600/300",
-                    source = article.source?.name ?: "Unknown Source",
+                    source = article.author ?: "Unknown Source",
                     publishedAt = article.publishedAt ?: "",
                     isBookmarked = true,
                     onBookmarkClick = {
                         bookmarkViewModel.removeBookmark(article)
                     },
                     onArticleClick = {
-                        val encodedUrl = URLEncoder.encode(
-                            article.url ?: "",
-                            StandardCharsets.UTF_8.toString()
-                        )
-                        navController.navigate("webview/$encodedUrl")
+                        navController.navigate(Screen.WebView.createRoute(article.url ?: ""))
                     }
                 )
 
