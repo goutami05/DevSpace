@@ -54,7 +54,8 @@ fun HomeScreen(
             item {
                 TopBar(
                     title = "Tech Insights",
-                    subtitle = "Your daily dose of system updates and breaking tech 🚀"
+                    subtitle = "Your daily dose of system updates and breaking tech 🚀",
+                    navController = navController
                 )
             }
 

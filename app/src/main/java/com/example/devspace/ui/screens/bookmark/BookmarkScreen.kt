@@ -48,7 +48,8 @@ fun BookmarkScreen(
             item {
                 TopBar(
                     title = "Bookmarks",
-                    subtitle = "Your saved articles"
+                    subtitle = "Your saved articles",
+                    navController = navController
                 )
             }
 

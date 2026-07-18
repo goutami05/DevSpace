@@ -43,7 +43,8 @@ fun RepoScreen(
     ) {
         TopBar(
             title = "Trending Repositories",
-            subtitle = "Explore top-tier open source innovations worldwide 🌍"
+            subtitle = "Explore top-tier open source innovations worldwide 🌍",
+            navController = navController
         )
 
         // 🌟 Input Search Field
