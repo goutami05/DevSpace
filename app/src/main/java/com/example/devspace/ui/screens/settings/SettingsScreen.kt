@@ -12,16 +12,24 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.devspace.datastore.ThemePreferences
 import com.example.devspace.navigation.Screen
+import com.example.devspace.viewmodel.ThemeViewModel
+import com.example.devspace.viewmodel.ThemeViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,9 +37,15 @@ fun SettingsScreen(
     navController: NavController
 ) {
 
-    var darkTheme by remember {
-        mutableStateOf(false)
-    }
+    val context = LocalContext.current
+
+    val themeViewModel: ThemeViewModel = viewModel(
+        factory = ThemeViewModelFactory(
+            ThemePreferences(context)
+        )
+    )
+
+    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
 
     Scaffold(
 
@@ -83,7 +97,7 @@ fun SettingsScreen(
 
                         leadingContent = {
 
-                            androidx.compose.material3.Icon(
+                            Icon(
                                 imageVector = Icons.Default.Palette,
                                 contentDescription = null
                             )
@@ -93,10 +107,15 @@ fun SettingsScreen(
                         trailingContent = {
 
                             Switch(
-                                checked = darkTheme,
+
+                                checked = isDarkTheme,
+
                                 onCheckedChange = {
-                                    darkTheme = it
+
+                                    themeViewModel.toggleTheme(it)
+
                                 }
+
                             )
 
                         }
@@ -135,7 +154,7 @@ fun SettingsScreen(
 
                         leadingContent = {
 
-                            androidx.compose.material3.Icon(
+                            Icon(
                                 imageVector = Icons.Default.Info,
                                 contentDescription = null
                             )
@@ -144,7 +163,7 @@ fun SettingsScreen(
 
                         trailingContent = {
 
-                            androidx.compose.material3.Icon(
+                            Icon(
                                 imageVector = Icons.Default.ChevronRight,
                                 contentDescription = null
                             )
