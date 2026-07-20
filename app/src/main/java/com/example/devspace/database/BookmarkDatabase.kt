@@ -7,20 +7,28 @@ import androidx.room.RoomDatabase
 import com.example.devspace.utils.Constants
 
 @Database(
-    entities = [BookmarkEntity::class],
-    version = 1,
+    entities = [
+        BookmarkEntity::class,
+        RepoBookmarkEntity::class
+    ],
+    version = 3,
     exportSchema = false
 )
 abstract class BookmarkDatabase : RoomDatabase() {
 
     abstract fun bookmarkDao(): BookmarkDao
 
+    abstract fun repoBookmarkDao(): RepoBookmarkDao
+
     companion object {
+
         @Volatile
         private var INSTANCE: BookmarkDatabase? = null
 
         fun getDatabase(context: Context): BookmarkDatabase {
+
             return INSTANCE ?: synchronized(this) {
+
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     BookmarkDatabase::class.java,
@@ -28,7 +36,9 @@ abstract class BookmarkDatabase : RoomDatabase() {
                 )
                     .fallbackToDestructiveMigration()
                     .build()
+
                 INSTANCE = instance
+
                 instance
             }
         }

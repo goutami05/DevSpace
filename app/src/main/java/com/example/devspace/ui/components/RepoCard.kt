@@ -1,13 +1,18 @@
 package com.example.devspace.ui.components
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CallSplit
+import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -15,20 +20,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.runtime.remember
 import com.example.devspace.model.github.Repo
 
 @Composable
 fun RepoCard(
     repo: Repo,
+    isBookmarked: Boolean,
+    onBookmarkClick: () -> Unit,
     onRepoClick: () -> Unit
 ) {
 
@@ -85,7 +89,7 @@ fun RepoCard(
             ) {
 
                 Text(
-                    text = repo.language ?: "",
+                    text = repo.language ?: "Unknown",
                     modifier = Modifier.padding(
                         horizontal = 12.dp,
                         vertical = 5.dp
@@ -163,6 +167,23 @@ fun RepoCard(
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
+
+                IconButton(
+                    onClick = onBookmarkClick
+                ) {
+
+                    Icon(
+                        imageVector =
+                            if (isBookmarked)
+                                Icons.Filled.Bookmark
+                            else
+                                Icons.Outlined.BookmarkBorder,
+
+                        contentDescription = "Bookmark Repository",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+
+                }
 
                 IconButton(
                     onClick = onRepoClick

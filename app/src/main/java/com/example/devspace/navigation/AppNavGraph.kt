@@ -14,6 +14,8 @@ import com.example.devspace.ui.screens.home.HomeScreen
 import com.example.devspace.ui.screens.repo.RepoScreen
 import com.example.devspace.ui.screens.splash.SplashScreen
 import com.example.devspace.ui.screens.webview.WebViewScreen
+import com.example.devspace.ui.screens.settings.SettingsScreen
+import com.example.devspace.ui.screens.settings.AboutScreen
 
 @Composable
 fun AppNavGraph(
@@ -43,6 +45,18 @@ fun AppNavGraph(
 
         composable(Screen.Bookmark.route) {
             BookmarkScreen(navController = navController)
+        }
+
+        composable(Screen.Settings.route) {
+
+            SettingsScreen(navController)
+
+        }
+
+        composable(Screen.About.route) {
+
+            AboutScreen(navController)
+
         }
 
         composable(
