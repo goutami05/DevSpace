@@ -30,6 +30,10 @@ import com.example.devspace.datastore.ThemePreferences
 import com.example.devspace.navigation.Screen
 import com.example.devspace.viewmodel.ThemeViewModel
 import com.example.devspace.viewmodel.ThemeViewModelFactory
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
+import androidx.compose.material.icons.filled.Notifications
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -116,6 +120,80 @@ fun SettingsScreen(
 
                                 }
 
+                            )
+
+                        }
+
+                    )
+
+                }
+
+            }
+
+            item {
+
+                Card(
+
+                    modifier = Modifier.clickable {
+
+                        val intent =
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+
+                                    putExtra(
+                                        Settings.EXTRA_APP_PACKAGE,
+                                        context.packageName
+                                    )
+
+                                }
+
+                            } else {
+
+                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+
+                                    data = android.net.Uri.parse(
+                                        "package:${context.packageName}"
+                                    )
+
+                                }
+
+                            }
+
+                        context.startActivity(intent)
+
+                    }
+
+                ) {
+
+                    ListItem(
+
+                        headlineContent = {
+
+                            Text("Notifications")
+
+                        },
+
+                        supportingContent = {
+
+                            Text("Manage notification permissions")
+
+                        },
+
+                        leadingContent = {
+
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = null
+                            )
+
+                        },
+
+                        trailingContent = {
+
+                            Icon(
+                                imageVector = Icons.Default.ChevronRight,
+                                contentDescription = null
                             )
 
                         }

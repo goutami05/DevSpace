@@ -20,6 +20,21 @@ import com.example.devspace.ui.theme.DevSpaceTheme
 import com.example.devspace.viewmodel.ThemeViewModel
 import com.example.devspace.viewmodel.ThemeViewModelFactory
 import androidx.compose.material3.Scaffold
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
+import androidx.core.content.ContextCompat
+import com.example.devspace.notification.NotificationHelper
+import com.example.devspace.notification.NotificationScheduler
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 class MainActivity : ComponentActivity() {
 
@@ -40,6 +55,107 @@ class MainActivity : ComponentActivity() {
             )
 
             val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+
+            var showNotificationDialog by remember {
+                mutableStateOf(false)
+            }
+
+            val notificationPermissionLauncher =
+                rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.RequestPermission()
+                ) { isGranted ->
+
+                    if (isGranted) {
+                        // Permission granted
+                    } else {
+                        // Permission denied
+                    }
+
+                }
+
+            LaunchedEffect(Unit) {
+
+                NotificationHelper.createNotificationChannel(context)
+                NotificationScheduler.scheduleNotifications(context)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
+                    if (
+                        ContextCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+
+                        showNotificationDialog = true
+
+                    }
+
+                }
+
+            }
+
+            if (showNotificationDialog) {
+
+                AlertDialog(
+
+                    onDismissRequest = {
+                        showNotificationDialog = false
+                    },
+
+                    title = {
+                        Text("Stay Updated 🔔")
+                    },
+
+                    text = {
+                        Text(
+                            "Enable notifications to receive the latest tech news, trending repositories, and useful developer updates from DevSpace."
+                        )
+                    },
+
+                    confirmButton = {
+
+                        TextButton(
+
+                            onClick = {
+
+                                showNotificationDialog = false
+
+                                notificationPermissionLauncher.launch(
+                                    Manifest.permission.POST_NOTIFICATIONS
+                                )
+
+                            }
+
+                        ) {
+
+                            Text("Allow")
+
+                        }
+
+                    },
+
+                    dismissButton = {
+
+                        TextButton(
+
+                            onClick = {
+
+                                showNotificationDialog = false
+
+                            }
+
+                        ) {
+
+                            Text("Not Now")
+
+                        }
+
+                    }
+
+                )
+
+            }
 
             DevSpaceTheme(
                 darkTheme = isDarkTheme
