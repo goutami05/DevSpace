@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -26,32 +27,42 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.devspace.navigation.Screen
 import com.example.devspace.ui.components.RepoCard
 import com.example.devspace.ui.components.TopBar
+import com.example.devspace.viewmodel.BookmarkViewModel
 import com.example.devspace.viewmodel.RepoViewModel
 
 @Composable
 fun RepoScreen(
     navController: NavController,
-    repoViewModel: RepoViewModel = viewModel()
+    repoViewModel: RepoViewModel = viewModel(),
+    bookmarkViewModel: BookmarkViewModel = viewModel()
 ) {
+
     val lazyRepos = repoViewModel.githubReposStream.collectAsLazyPagingItems()
+
     val searchQuery by repoViewModel.searchQuery.collectAsState()
+
+    val bookmarkedRepoIds by bookmarkViewModel.bookmarkedRepoIds.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+
         TopBar(
             title = "Trending Repositories",
             subtitle = "Explore top-tier open source innovations worldwide 🌍",
             navController = navController
         )
 
-        // 🌟 Input Search Field
         OutlinedTextField(
             value = searchQuery,
-            onValueChange = { repoViewModel.updateSearchQuery(it) },
-            label = { Text("Search by programming language (e.g., Kotlin)") },
+            onValueChange = {
+                repoViewModel.updateSearchQuery(it)
+            },
+            label = {
+                Text("Search by programming language (e.g., Kotlin)")
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -63,33 +74,65 @@ fun RepoScreen(
             contentPadding = PaddingValues(bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(count = lazyRepos.itemCount) { index ->
+
+            items(lazyRepos.itemCount) { index ->
+
                 val repo = lazyRepos[index]
+
                 if (repo != null) {
+
                     RepoCard(
+
                         repo = repo,
+
+                        isBookmarked = bookmarkedRepoIds.contains(repo.id.toLong()),
+
+                        onBookmarkClick = {
+
+                            bookmarkViewModel.toggleRepoBookmark(repo)
+
+                        },
+
                         onRepoClick = {
-                            val originalUrl = repo.html_url
-                            if (!originalUrl.isNullOrBlank()) {
-                                navController.navigate(Screen.WebView.createRoute(originalUrl))
+
+                            if (repo.html_url.isNotBlank()) {
+
+                                navController.navigate(
+                                    Screen.WebView.createRoute(repo.html_url)
+                                )
+
                             }
+
                         }
+
                     )
+
                 }
+
             }
 
             if (lazyRepos.loadState.append is LoadState.Loading) {
+
                 item {
+
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
+
                         contentAlignment = Alignment.Center
                     ) {
+
                         CircularProgressIndicator()
+
                     }
+
                 }
+
             }
+
         }
+
     }
+
 }
